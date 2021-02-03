@@ -7,7 +7,7 @@
     <ul v-else>
       <li v-for="product in products" :key="product.id">
         {{ product.title }} – {{ product.price | currency }} - {{ product.inventory }}
-        <button 
+        <button
         @click="addProductToCart(product)"
         :disabled="!productIsInStock(product)">
           Add to cart
@@ -17,7 +17,7 @@
   </div>
 </template>
 
-<script> 
+<script>
 
 import {mapState, mapGetters, mapActions} from 'vuex';
 
@@ -30,7 +30,7 @@ export default {
   },
   computed: {
     ...mapState({
-      products: 'products',
+      products: state => state.products.items,
     }),
 
     ...mapGetters({

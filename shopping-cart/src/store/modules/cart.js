@@ -1,15 +1,15 @@
 import shop from '@/api/shop'
 
-
 export default {
+  namespaced: true,
+
   state: {
-    // id, quantity
     items: [],
     checkoutStatus: null,
   },
 
   getters: {
-    cartProducts (state, getters, rootState) {
+    cartProducts(state, getters, rootState, rootGetters) {
       return state.items.map(cartItem => {
         const product = rootState.products.items.find(product => product.id === cartItem.id)
         return {
@@ -20,7 +20,7 @@ export default {
       })
     },
 
-    cartTotal (state, getters) {
+    cartTotal(state, getters) {
       return getters.cartProducts.reduce((total, product) => total += product.price * product.quantity, 0);
     },
   },
@@ -37,18 +37,18 @@ export default {
       cartItem.quantity++;
     },
 
-    setCheckoutStatus (state, status) {
+    setCheckoutStatus(state, status) {
       state.checkoutStatus = status;
     },
 
-    emptyCart (state) {
+    emptyCart(state) {
       state.items = []
     }
   },
 
   actions: {
-    addProductToCart ({state, getters, commit}, product) {
-      if (getters.productIsInStock(product)) {
+    addProductToCart({state, getters, commit, rootState, rootGetters}, product) {
+      if (rootGetters['products/productIsInStock'](product)) {
         const cartItem = state.items.find(item => item.id === product.id);
         // find cartItem
         if (!cartItem) {
@@ -57,11 +57,11 @@ export default {
           commit('incrementItemQuantity', cartItem);
         }
 
-        commit('decrementProductInventory', product);
+        commit('products/decrementProductInventory', product, { root: true });
       }
     },
 
-    checkout ({state, commit}) {
+    checkout({state, commit}) {
       shop.buyProducts(
         state.items,
         () => { // Success

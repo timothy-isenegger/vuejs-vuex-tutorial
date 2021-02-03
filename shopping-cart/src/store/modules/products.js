@@ -1,12 +1,14 @@
 import shop from '@/api/shop'
 
 export default {
+  namespaced: true,
+
   state: {
     items: [],
   },
 
   getters: {
-    availableProducts (state, getters) {
+    availableProducts(state, getters) {
       return state.items.filter(product => product.inventory > 0);
     },
 
